@@ -5,7 +5,7 @@ const cors = require('cors');
 const setoresRoutes = require ('./routes/setores-routes');
 const usuarioRoutes = require ('./routes/usuario-routes');
 
-app.use(cors({origin: 'http://localhost:5174'}));
+app.use(cors());
 
 app.use(express.json());
 app.use('/', setoresRoutes);
