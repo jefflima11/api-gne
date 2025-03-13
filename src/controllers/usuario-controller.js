@@ -109,4 +109,49 @@ async function atualizarUsuario(req, res) {
     }
 }
 
-module.exports =  { listarUsuarios, atualizarUsuario, listarUsuarioPorId };
+async function inserirUsuario(req, res) {
+    try {
+        const { nm_usuario, dt_nascimento, nr_cpf, cd_setor, cd_cargo, senha, email, contato, cd_tp_privilegio } = req.body;
+
+        const pool = await dbConnection;
+        const result = pool.request()
+            .input('nm_usuario', nm_usuario)
+            .input('dt_nascimento', dt_nascimento)
+            .input('nr_cpf', nr_cpf)
+            .input('cd_setor', cd_setor)
+            .input('cd_cargo', cd_cargo)
+            .input('senha', senha)
+            .input('emai', email)
+            .input('contato', contato)
+            .input('cd_tp_privilegio', cd_tp_privilegio)
+            .query(`INSERT INTO dbo.usuarios (
+                        NM_USUARI,
+                        DT_NASCIMENTO,
+                        NR_CPF,
+                        DT_CADASTRO,
+                        CD_USURIO_CADASTRO,
+                        CD_SETOR,
+                        CD_CARGO,
+                        SENHA,
+                        EMAIL,
+                        CONTATO,
+                        CD_TP_PRIVILEGIO
+                    )VALUES (
+                        '@nm_usuario',
+                        convert(datetime, '@dt_nascimento', 120),
+                        '@nr_cpf',
+                        GETDATE(),
+                        USER,
+                        @cd_setor,
+                        @cd_cargo,
+                        '@senha',
+                        '@email',
+                        '@contato',
+                        @cd_tp_privilegio
+                    );`);
+        res.status(200).json({ message: 'Usuario inserido com sucesso.' });
+    } catch {
+        res.status(500).json({ message: 'erro ao inserir usuario.' });
+    }
+}
+module.exports =  { listarUsuarios, atualizarUsuario, listarUsuarioPorId, inserirUsuario };
